@@ -5,14 +5,24 @@ import Loader from 'react-loader-spinner';
 import useInterval from '@use-it/interval';
 import Chart from '@/components/Chart';
 import Alunos from '@/components/Alunos';
+import { Box, Spinner } from '@chakra-ui/react';
 
 let classifier;
+
+
 
 export default function Home() {
   const videoRef = useRef();
   const [start, setStart] = useState(false);
   const [result, setResult] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  //global
+  let ml5: any;
+
+  //in component
+  useEffect(() => {
+    ml5 = require('ml5')
+  }, [])
 
   useEffect(() => {
     classifier = ml5.imageClassifier("./model/model.json", () => {
@@ -25,6 +35,7 @@ export default function Home() {
         });
     });
   }, []);
+
 
   useInterval(() => {
     if (classifier && start) {
@@ -46,14 +57,19 @@ export default function Home() {
 
   return (
     <div className="container">
-      <Loader
+      {!loaded && (
+        <Box><Spinner /></Box>
+      )
+      }
+
+      {/* <Loader
         type="Watch"
         color="#00BFFF"
         height={200}
         width={200}
         visible={!loaded}
         style={{display:'flex', justifyContent:'center', marginTop:'30px' }}
-      />
+      /> */}
       <div className="upper">
         <div className="capture">
           <video
